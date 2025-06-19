@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: customer-segmentation-api
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      bash backend/install_wkhtmltopdf.sh
+    startCommand: python backend/app.py
+    envVars:
+      - key: FLASK_ENV
+        value: production
