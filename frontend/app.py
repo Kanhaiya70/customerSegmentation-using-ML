@@ -65,8 +65,8 @@ st.markdown('''
 # BACKEND_URL = 'http://localhost:5000/predict'
 # REPORT_URL = 'http://localhost:5000/generate_report'
 
-BACKEND_URL = 'https://customersegmentation-uujc.onrender.com/predict'
-REPORT_URL = 'https://customersegmentation-uujc.onrender.com/generate_report'
+BACKEND_URL = 'https://customersegmentation-2.onrender.com/predict'
+REPORT_URL = 'https://customersegmentation-2.onrender.com/generate_report'
 
 SEGMENT_DESCRIPTIONS = {
     0: [
