@@ -98,7 +98,7 @@ SEGMENT_DESCRIPTIONS = {
 
 st.markdown("""
 <div style='display: flex; align-items: center; gap: 1em;'>
-    <img src='https://img.icons8.com/ios-filled/50/4F8BF9/segmentation.png' width='40' style='margin-bottom:0;'>
+    <img src='https://cdn-icons-png.flaticon.com/512/12072/12072160.png' width='40' style='margin-bottom:0;'>
     <h1 style='color:#4F8BF9; margin-bottom:0;'>Customer Segmentation & Insights Dashboard</h1>
 </div>
 """, unsafe_allow_html=True)
