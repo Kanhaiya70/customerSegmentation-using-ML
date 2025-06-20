@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import io
 import base64
+import os
+st.write("Current working directory:", os.getcwd())
 
 # --- Custom CSS for dark theme and modern look ---
 st.markdown('''
