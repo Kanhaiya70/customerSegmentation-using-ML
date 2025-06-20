@@ -49,7 +49,9 @@ SEGMENT_DESCRIPTIONS = {
 # Load model (placeholder, replace with actual model)
 try:
     model = joblib.load('segment_classifier.pkl')
+    print("Model loaded successfully")
 except Exception:
+    print(f"Model loading failed: {Exception}")
     model = None
 
 @app.route('/predict', methods=['POST'])
