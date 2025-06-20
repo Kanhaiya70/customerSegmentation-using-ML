@@ -12,6 +12,8 @@ WORKDIR /app
 # Copy your code
 COPY . .
 
+COPY customers.csv customers.csv
+
 # Install Python packages
 RUN pip install --no-cache-dir -r backend/requirements.txt
 

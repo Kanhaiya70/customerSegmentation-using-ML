@@ -115,13 +115,9 @@ if 'scatter_img' not in st.session_state:
 # Load sample data for scatter plot
 @st.cache_data
 def load_sample_data():
+    df = pd.read_csv('../customers.csv')
     # You can replace this with loading from a real CSV if available
-    return pd.DataFrame({
-        'age': [25, 40, 22, 35, 50, 28, 33, 45],
-        'income': [60, 30, 55, 120, 80, 40, 70, 100],
-        'score': [80, 40, 90, 85, 60, 20, 50, 30],
-        'segment': [2, 0, 1, 2, 3, 0, 3, 4]
-    })
+    return df
 
 sample_df = load_sample_data()
 
