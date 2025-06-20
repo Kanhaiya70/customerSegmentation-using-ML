@@ -131,79 +131,92 @@ if page == 'Prediction & Insights':
         submitted = st.form_submit_button('Predict Segment')
 
     if submitted:
-        payload = {'age': age, 'income': income, 'score': score}
-        try:
-            response = requests.post(BACKEND_URL, json=payload)
-            result = response.json()
-            st.markdown(f"""
-            <div class='report-section'>
-                <h3 style='color:#4F8BF9;'>🎯 Prediction Result</h3>
-                <p style='font-size:1.2em;'><b>Predicted Segment:</b> <span style='color:#FFD600;'>{result['segment']} - {result['label']}</span></p>
-            </div>
-            """, unsafe_allow_html=True)
-            st.write('Probabilities:', result['probabilities'])
-            st.markdown("<hr>", unsafe_allow_html=True)
-            # Plotly Pie chart for interactive display
-            st.markdown("<h4 style='color:#4F8BF9;'>📊 Segment Probability Breakdown</h4>", unsafe_allow_html=True)
-            fig_pie = px.pie(
-                names=list(result['probabilities'].keys()),
-                values=list(result['probabilities'].values()),
-                title='Segment Probability Breakdown',
-                color_discrete_sequence=px.colors.sequential.Blues_r
-            )
-            st.plotly_chart(fig_pie, use_container_width=True)
-            # Matplotlib Pie chart for PDF
-            pie_buf = io.BytesIO()
-            plt.figure(figsize=(4,4))
-            plt.pie(list(result['probabilities'].values()), labels=list(result['probabilities'].keys()), autopct='%1.1f%%')
-            plt.title('Segment Probability Breakdown')
-            plt.tight_layout()
-            plt.savefig(pie_buf, format='png')
-            plt.close()
-            pie_b64 = base64.b64encode(pie_buf.getvalue()).decode('utf-8')
-            st.session_state['pie_chart_img'] = pie_b64
-
-            # Plotly Scatter plot for interactive display
-            st.markdown("<h4 style='color:#4F8BF9;'>🔎 Income vs. Spending Score (Clusters)</h4>", unsafe_allow_html=True)
-            fig_scatter = px.scatter(
-                sample_df, x='income', y='score', color='segment',
-                title='Income vs. Spending Score (Clusters)',
-                labels={'income': 'Annual Income (k$)', 'score': 'Spending Score'},
-                color_continuous_scale=px.colors.sequential.Blues_r
-            )
-            fig_scatter.add_scatter(x=[income], y=[score], mode='markers', marker=dict(size=15, color='Gold', symbol='diamond'), name='Current User')
-            st.plotly_chart(fig_scatter, use_container_width=True)
-
-            # Matplotlib Scatter plot for PDF
-            scatter_buf = io.BytesIO()
-            plt.figure(figsize=(5,4))
-            for seg in sample_df['segment'].unique():
-                seg_df = sample_df[sample_df['segment'] == seg]
-                plt.scatter(seg_df['income'], seg_df['score'], label=f'Segment {seg}')
-            plt.scatter([income], [score], color='Black', marker='*', s=200, label='Current User')
-            plt.xlabel('Annual Income (k$)')
-            plt.ylabel('Spending Score')
-            plt.title('Income vs. Spending Score (Clusters)')
-            plt.legend()
-            plt.tight_layout()
-            plt.savefig(scatter_buf, format='png')
-            plt.close()
-            scatter_b64 = base64.b64encode(scatter_buf.getvalue()).decode('utf-8')
-            st.session_state['scatter_img'] = scatter_b64
-
-            # Save report data to session state
-            st.session_state['report_data'] = {
-                'age': age,
-                'income': income,
-                'score': score,
-                'segment': result['segment'],
-                'label': result['label'],
-                'probabilities': result['probabilities'],
-                'pie_chart_img': pie_b64,
-                'scatter_img': scatter_b64
+        st.audio('audio.mp3', format='audio/mp3', start_time=0, autoplay=True)
+        st.markdown("""
+            <style>
+            audio {
+                display: none;
             }
-        except Exception as e:
-            st.error(f'Prediction failed: {e}')
+            </style>
+        """, unsafe_allow_html=True)
+        payload = {'age': age, 'income': income, 'score': score}
+
+        with st.spinner('🔍 Ruko Zara, Sabar karo !.....😂'):
+            try:
+                response = requests.post(BACKEND_URL, json=payload)
+                result = response.json()
+                st.markdown(f"""
+                <div class='report-section'>
+                    <h3 style='color:#4F8BF9;'>🎯 Prediction Result</h3>
+                    <p style='font-size:1.2em;'><b>Predicted Segment:</b> <span style='color:#FFD600;'>{result['segment']} - {result['label']}</span></p>
+                </div>
+                """, unsafe_allow_html=True)
+
+                st.write('Probabilities:', result['probabilities'])
+                st.markdown("<hr>", unsafe_allow_html=True)
+                # Plotly Pie chart for interactive display
+                st.markdown("<h4 style='color:#4F8BF9;'>📊 Segment Probability Breakdown</h4>", unsafe_allow_html=True)
+                fig_pie = px.pie(
+                    names=list(result['probabilities'].keys()),
+                    values=list(result['probabilities'].values()),
+                    title='Segment Probability Breakdown',
+                    color_discrete_sequence=px.colors.sequential.Blues_r
+                )
+                st.plotly_chart(fig_pie, use_container_width=True)
+                # Matplotlib Pie chart for PDF
+                pie_buf = io.BytesIO()
+                plt.figure(figsize=(4,4))
+                plt.pie(list(result['probabilities'].values()), labels=list(result['probabilities'].keys()), autopct='%1.1f%%')
+                plt.title('Segment Probability Breakdown')
+                plt.tight_layout()
+                plt.savefig(pie_buf, format='png')
+                plt.close()
+                pie_b64 = base64.b64encode(pie_buf.getvalue()).decode('utf-8')
+                st.session_state['pie_chart_img'] = pie_b64
+
+                # Plotly Scatter plot for interactive display
+                st.markdown("<h4 style='color:#4F8BF9;'>🔎 Income vs. Spending Score (Clusters)</h4>", unsafe_allow_html=True)
+                fig_scatter = px.scatter(
+                    sample_df, x='income', y='score', color='segment',
+                    title='Income vs. Spending Score (Clusters)',
+                    labels={'income': 'Annual Income (k$)', 'score': 'Spending Score'},
+                    color_continuous_scale=px.colors.sequential.Blues_r
+                )
+                fig_scatter.add_scatter(x=[income], y=[score], mode='markers', marker=dict(size=15, color='Gold', symbol='diamond'), name='Current User')
+                st.plotly_chart(fig_scatter, use_container_width=True)
+
+                # Matplotlib Scatter plot for PDF
+                scatter_buf = io.BytesIO()
+                plt.figure(figsize=(5,4))
+                for seg in sample_df['segment'].unique():
+                    seg_df = sample_df[sample_df['segment'] == seg]
+                    plt.scatter(seg_df['income'], seg_df['score'], label=f'Segment {seg}')
+                plt.scatter([income], [score], color='Black', marker='*', s=200, label='Current User')
+                plt.xlabel('Annual Income (k$)')
+                plt.ylabel('Spending Score')
+                plt.title('Income vs. Spending Score (Clusters)')
+                plt.legend()
+                plt.tight_layout()
+                plt.savefig(scatter_buf, format='png')
+                plt.close()
+                scatter_b64 = base64.b64encode(scatter_buf.getvalue()).decode('utf-8')
+                st.session_state['scatter_img'] = scatter_b64
+
+                # Save report data to session state
+                st.session_state['report_data'] = {
+                    'age': age,
+                    'income': income,
+                    'score': score,
+                    'segment': result['segment'],
+                    'label': result['label'],
+                    'probabilities': result['probabilities'],
+                    'pie_chart_img': pie_b64,
+                    'scatter_img': scatter_b64
+                }
+
+            except Exception as e:
+                st.error(f'Prediction failed: {e}')
+
 
 elif page == 'Report Generation':
     st.markdown("""
