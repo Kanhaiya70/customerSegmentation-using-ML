@@ -15,8 +15,6 @@ COPY . .
 # Install Python packages
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
-COPY backend/segment_classifier.pkl backend/
-
 # Expose Flask port
 EXPOSE 5000
 
