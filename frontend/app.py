@@ -6,8 +6,6 @@ import numpy as np
 import pandas as pd
 import io
 import base64
-import os
-st.write("Current working directory:", os.getcwd())
 
 # --- Custom CSS for dark theme and modern look ---
 st.markdown('''
@@ -118,7 +116,6 @@ if 'scatter_img' not in st.session_state:
 @st.cache_data
 def load_sample_data():
     df = pd.read_csv('../data/customers.csv')
-    # You can replace this with loading from a real CSV if available
     return df
 
 sample_df = load_sample_data()
@@ -165,6 +162,7 @@ if page == 'Prediction & Insights':
             plt.close()
             pie_b64 = base64.b64encode(pie_buf.getvalue()).decode('utf-8')
             st.session_state['pie_chart_img'] = pie_b64
+
             # Plotly Scatter plot for interactive display
             st.markdown("<h4 style='color:#4F8BF9;'>🔎 Income vs. Spending Score (Clusters)</h4>", unsafe_allow_html=True)
             fig_scatter = px.scatter(
@@ -173,15 +171,16 @@ if page == 'Prediction & Insights':
                 labels={'income': 'Annual Income (k$)', 'score': 'Spending Score'},
                 color_continuous_scale=px.colors.sequential.Blues_r
             )
-            fig_scatter.add_scatter(x=[income], y=[score], mode='markers', marker=dict(size=15, color='gold', symbol='x'), name='Current User')
+            fig_scatter.add_scatter(x=[income], y=[score], mode='markers', marker=dict(size=15, color='Gold', symbol='diamond'), name='Current User')
             st.plotly_chart(fig_scatter, use_container_width=True)
+
             # Matplotlib Scatter plot for PDF
             scatter_buf = io.BytesIO()
             plt.figure(figsize=(5,4))
             for seg in sample_df['segment'].unique():
                 seg_df = sample_df[sample_df['segment'] == seg]
                 plt.scatter(seg_df['income'], seg_df['score'], label=f'Segment {seg}')
-            plt.scatter([income], [score], color='gold', marker='x', s=100, label='Current User')
+            plt.scatter([income], [score], color='Black', marker='*', s=200, label='Current User')
             plt.xlabel('Annual Income (k$)')
             plt.ylabel('Spending Score')
             plt.title('Income vs. Spending Score (Clusters)')
@@ -191,6 +190,7 @@ if page == 'Prediction & Insights':
             plt.close()
             scatter_b64 = base64.b64encode(scatter_buf.getvalue()).decode('utf-8')
             st.session_state['scatter_img'] = scatter_b64
+
             # Save report data to session state
             st.session_state['report_data'] = {
                 'age': age,
