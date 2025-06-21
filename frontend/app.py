@@ -1,12 +1,16 @@
 import streamlit as st
 import requests
 import plotly.express as px
+import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import io
 import base64
 import time
+from sklearn.cluster import AgglomerativeClustering
+import scipy.cluster.hierarchy as sch
+
 
 # --- Custom CSS for dark theme and modern look ---
 st.markdown('''
@@ -104,7 +108,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-page = st.sidebar.radio('Navigation', ['Prediction & Insights', 'Report Generation'])
+page = st.sidebar.radio('Navigation', ['Prediction & Insights', 'Clustering Analysis', 'Report Generation'])
 
 if 'report_data' not in st.session_state:
     st.session_state['report_data'] = None
@@ -116,7 +120,7 @@ if 'scatter_img' not in st.session_state:
 # Load sample data for scatter plot
 @st.cache_data
 def load_sample_data():
-    df = pd.read_csv('data/customers.csv')
+    df = pd.read_csv('../data/enhanced_customers.csv')
     return df
 
 sample_df = load_sample_data()
@@ -271,3 +275,103 @@ elif page == 'Report Generation':
                         st.error('Failed to generate PDF. Please try again.')
             except Exception as e:
                 st.error(f'PDF generation failed: {e}') 
+
+elif page == 'Clustering Analysis':
+    st.markdown("""
+    <div style='margin-bottom:1em;'><h2>📊 Clustering Insights</h2></div>
+    """, unsafe_allow_html=True)
+
+    # Load dataset
+    df = sample_df  # already cached as `sample_df`
+
+    # Cluster sizes
+    st.subheader("📈 Cluster Sizes")
+    cluster_sizes = df['segment'].value_counts().sort_index()
+    st.bar_chart(cluster_sizes)
+
+    # Centroids
+    st.subheader("📍 Cluster Centroids")
+    centroids = df.groupby('segment')[['age', 'income', 'score']].mean().round(2)
+    st.dataframe(centroids)
+
+    st.subheader("🌲 Hierarchical Clustering (Dendrogram)")
+
+    # Prepare features for clustering
+    X = df[['age', 'income', 'score']].values
+
+    # Plot dendrogram
+    fig_dendro = plt.figure(figsize=(8, 5))
+    dendrogram = sch.dendrogram(sch.linkage(X, method='ward'))
+    plt.title('Dendrogram')
+    plt.xlabel('Customers')
+    plt.ylabel('Euclidean distances')
+    st.pyplot(fig_dendro)
+
+    # Agglomerative Clustering
+    hc = AgglomerativeClustering(n_clusters=5, metric='euclidean', linkage='ward')
+    y_hc = hc.fit_predict(X)
+
+    # Add cluster labels to dataframe
+    df['agglo_cluster'] = y_hc
+
+    # Show cluster sizes
+    st.subheader("🧮 Agglomerative Cluster Sizes")
+    agglo_sizes = df['agglo_cluster'].value_counts().sort_index()
+    st.bar_chart(agglo_sizes)
+
+    # Show cluster centroids (mean of each cluster)
+    st.subheader("📍 Agglomerative Cluster Centroids")
+    agglo_centroids = df.groupby('agglo_cluster')[['age', 'income', 'score']].mean().round(2)
+    st.dataframe(agglo_centroids)
+
+    # Visualize clusters (2D)
+    st.subheader("🗺️ Income vs. Score (Agglomerative Clusters)")
+    fig_scatter = px.scatter(
+        df, x='income', y='score', color='agglo_cluster',
+        title='Agglomerative Clusters (Income vs Score)',
+        labels={'income': 'Annual Income (k$)', 'score': 'Spending Score'}
+    )
+    
+    st.plotly_chart(fig_scatter, use_container_width=True)
+
+
+    # Scatter plot with centroids
+    
+
+    st.subheader("📡 Visualizing Clusters and Centroids")
+
+    # Create base scatter WITHOUT legend by converting px.scatter to go traces
+    fig = go.Figure()
+
+    # Manually add each point in df as scatter trace without legend
+    fig.add_trace(go.Scatter(
+        x=df['income'], y=df['score'],
+        mode='markers',
+        marker=dict(
+            color=df['agglo_cluster'],
+            colorscale='Viridis',
+            size=8,
+            colorbar=dict(title='Cluster'),  # remove this line to also hide colorbar
+            showscale=False  # ← disables color bar
+        ),
+        showlegend=False  # ← disables cluster legend
+    ))
+
+    # Plot centroids WITH legend
+    for seg, row in centroids.iterrows():
+        fig.add_trace(go.Scatter(
+            x=[row['income']], y=[row['score']],
+            mode='markers+text',
+            marker=dict(size=16, color='red', symbol='x'),
+            text=[f'Centroid {seg}'],
+            name=f'Centroid {seg}',
+            showlegend=True  # ← this will appear in legend
+        ))
+
+    fig.update_layout(
+        title='Clusters with Centroids',
+        xaxis_title='Annual Income (k$)',
+        yaxis_title='Spending Score',
+    )
+
+    st.plotly_chart(fig, use_container_width=True) 
