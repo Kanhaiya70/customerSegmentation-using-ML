@@ -124,8 +124,8 @@ def generate_report():
     html += '</body></html>'
     # Generate PDF to a temporary file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmpfile:
-        #config = pdfkit.configuration(wkhtmltopdf=r'C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
-        config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+        # config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
         pdfkit.from_string(html, tmpfile.name, configuration=config)
         tmpfile.flush()
         tmpfile.seek(0)
