@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import io
 import base64
+import time
 
 # --- Custom CSS for dark theme and modern look ---
 st.markdown('''
@@ -143,6 +144,7 @@ if page == 'Prediction & Insights':
 
         with st.spinner('🔍 Ruko Zara, Sabar karo !.....😂'):
             try:
+                time.sleep(0.5)
                 response = requests.post(BACKEND_URL, json=payload)
                 result = response.json()
                 st.markdown(f"""
@@ -163,6 +165,7 @@ if page == 'Prediction & Insights':
                     color_discrete_sequence=px.colors.sequential.Blues_r
                 )
                 st.plotly_chart(fig_pie, use_container_width=True)
+                
                 # Matplotlib Pie chart for PDF
                 pie_buf = io.BytesIO()
                 plt.figure(figsize=(4,4))
