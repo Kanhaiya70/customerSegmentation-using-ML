@@ -10,7 +10,10 @@ import base64
 import time
 from sklearn.cluster import AgglomerativeClustering
 import scipy.cluster.hierarchy as sch
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
 
 # --- Custom CSS for dark theme and modern look ---
 st.markdown('''
@@ -70,8 +73,8 @@ st.markdown('''
 # BACKEND_URL = 'http://localhost:5000/predict'
 # REPORT_URL = 'http://localhost:5000/generate_report'
 
-BACKEND_URL = 'https://customersegmentation-2.onrender.com/predict'
-REPORT_URL = 'https://customersegmentation-2.onrender.com/generate_report'
+BACKEND_URL = os.getenv("URL_PREDICT")
+REPORT_URL = os.getenv("URL_REPORT")
 
 SEGMENT_DESCRIPTIONS = {
     0: [

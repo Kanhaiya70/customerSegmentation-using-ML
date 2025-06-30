@@ -5,7 +5,9 @@ import pdfkit
 import tempfile
 import os
 from io import BytesIO
-import base64
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -142,8 +144,9 @@ def generate_report():
 
     # Generate PDF to a temporary file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmpfile:
-        config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
-        # config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
+        wkhtmltopdf_url = os.getenv("PDF_TOOLKIT")
+        # config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
+        config = pdfkit.configuration(wkhtmltopdf= wkhtmltopdf_url)
         pdfkit.from_string(html, tmpfile.name, configuration=config)
         tmpfile.flush()
         tmpfile.seek(0)

@@ -16,8 +16,6 @@ COPY . .
 
 # Install Python packages
 RUN pip install --no-cache-dir -r backend/requirements.txt
-RUN pip install --no-cache-dir -r frontend/requirements.txt
-
 
 # Expose Flask port
 EXPOSE 5000
