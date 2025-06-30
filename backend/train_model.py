@@ -13,4 +13,5 @@ clf = RandomForestClassifier(n_estimators=100, random_state=42)
 clf.fit(X, y)
 
 joblib.dump(clf, 'segment_classifier.pkl')
+joblib.dump(clf, '../segment_classifier.pkl')
 print('✅ Model retrained with logic-based segments.')
