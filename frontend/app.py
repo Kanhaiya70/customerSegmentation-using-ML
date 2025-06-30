@@ -130,6 +130,7 @@ if page == 'Prediction & Insights':
     <div style='margin-bottom:1em;'><h2>🧾 Customer Input</h2></div>
     """, unsafe_allow_html=True)
     with st.form('input_form'):
+        name = st.text_input('Name', placeholder= "Enter your name")        # Trial version
         age = st.number_input('Age', min_value=10, max_value=100, value=25)
         income = st.number_input('Annual Income (k$)', min_value=1, max_value=200, value=60)
         score = st.number_input('Spending Score (1–100)', min_value=1, max_value=100, value=80)
@@ -144,7 +145,7 @@ if page == 'Prediction & Insights':
             }
             </style>
         """, unsafe_allow_html=True)
-        payload = {'age': age, 'income': income, 'score': score}
+        payload = {'name': name, 'age': age, 'income': income, 'score': score}      # Trial version
 
         with st.spinner('🔍 Ruko Zara, Sabar karo !.....😂'):
             try:
@@ -169,6 +170,7 @@ if page == 'Prediction & Insights':
                     color_discrete_sequence=px.colors.sequential.Blues_r
                 )
                 st.plotly_chart(fig_pie, use_container_width=True)
+                st.markdown("<hr>", unsafe_allow_html=True)
                 
                 # Matplotlib Pie chart for PDF
                 pie_buf = io.BytesIO()
@@ -211,6 +213,7 @@ if page == 'Prediction & Insights':
 
                 # Save report data to session state
                 st.session_state['report_data'] = {
+                    'name': name,           # Trial version
                     'age': age,
                     'income': income,
                     'score': score,
@@ -227,7 +230,9 @@ if page == 'Prediction & Insights':
 
 elif page == 'Report Generation':
     st.markdown("""
-    <div style='margin-bottom:1em;'><h2>📝 Report Generation</h2></div>
+    <div style='margin-bottom:1em;'>
+        <h2>📝 Report Generation</h2>
+    </div>
     """, unsafe_allow_html=True)
     report_data = st.session_state.get('report_data')
     if not report_data:
@@ -237,26 +242,26 @@ elif page == 'Report Generation':
         seg_desc = SEGMENT_DESCRIPTIONS.get(seg, ["No description available."])
         st.markdown(f"""
         <div class='report-section'>
-        <h3 style='color:#4F8BF9;'>Customer Segmentation Report</h3>
-        <hr>
-        <b>Name:</b> Anonymous User  <br>
-        <b>Age:</b> {report_data['age']}  <br>
-        <b>Income:</b> {report_data['income']}k  <br>
-        <b>Spending Score:</b> {report_data['score']}  <br>
-        <br>
-        <b>Predicted Segment:</b> <span style='color:#FFD600;'>{seg} - {report_data['label']}</span><br>
-        <br>
-        <b>Segment Characteristics:</b>
-        <ul>
-        {''.join(f'<li>{desc}</li>' for desc in seg_desc)}
-        </ul>
-        <br>
-        <b>Included Charts:</b>
-        <ul>
-        <li>Segment Distribution Bar Chart</li>
-        <li>Probability Pie Chart</li>
-        <li>Scatter Plot</li>
-        </ul>
+            <h3 style='color:#4F8BF9;'>Customer Segmentation Report</h3>
+            <hr>
+            <b>Name:</b> {report_data['name']}  <br>    
+            <b>Age:</b> {report_data['age']}  <br>
+            <b>Income:</b> {report_data['income']}k  <br>
+            <b>Spending Score:</b> {report_data['score']}  <br>
+            <br>
+            <b>Predicted Segment:</b> <span style='color:#FFD600;'>{seg} - {report_data['label']}</span><br>
+            <br>
+            <b>Segment Characteristics:</b>
+            <ul>
+                {''.join(f'<li>{desc}</li>' for desc in seg_desc)}
+            </ul>
+            <br>
+            <b>Included Charts:</b>
+            <ul>
+                <li>Segment Distribution Bar Chart</li>
+                <li>Probability Pie Chart</li>
+                <li>Scatter Plot</li>
+            </ul>
         </div>
         """, unsafe_allow_html=True)
         # PDF download logic

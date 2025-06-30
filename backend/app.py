@@ -85,6 +85,7 @@ def predict():
 @app.route('/generate_report', methods=['POST'])
 def generate_report():
     data = request.get_json()
+    name = data.get('name')     #Trial version
     age = data.get('age')
     income = data.get('income')
     score = data.get('score')
@@ -97,31 +98,48 @@ def generate_report():
     # HTML template for the report
     html = f'''
     <html>
-    <head><meta charset="utf-8"><title>Customer Segmentation Report</title></head>
-    <body>
-    <h1>Customer Segmentation Report</h1>
-    <hr>
-    <p><b>Name:</b> Anonymous User<br>
-    <b>Age:</b> {age}<br>
-    <b>Income:</b> {income}k<br>
-    <b>Spending Score:</b> {score}</p>
-    <p><b>Predicted Segment:</b> {segment} - {label}</p>
-    <p><b>Segment Characteristics:</b><ul>
-    {''.join(f'<li>{desc}</li>' for desc in seg_desc)}
-    </ul></p>
-    <p><b>Probabilities:</b><ul>
-    {''.join(f'<li>Segment {k}: {v:.2f}</li>' for k, v in probabilities.items())}
-    </ul></p>
-    <p><b>Included Charts:</b><ul>
-    <li>Probability Pie Chart</li>
-    <li>Scatter Plot</li>
-    </ul></p>
+        <head>
+            <meta charset="utf-8">
+            <title>Customer Segmentation Report</title>
+        </head>
+        <body>
+            <h1>Customer Segmentation Report</h1>
+            <hr>
+            <p>
+                <b>Name:</b> {name}<br>      
+                <b>Age:</b> {age}<br>
+                <b>Income:</b> {income}k$<br>
+                <b>Spending Score:</b> {score}
+            </p>
+            <p>
+                <b>Predicted Segment:</b> {segment} - {label}
+            </p>
+            <p>
+                <b>Segment Characteristics:</b>
+                <ul>
+                    {''.join(f'<li>{desc}</li>' for desc in seg_desc)}
+                </ul>
+            </p>
+            <p>
+                <b>Probabilities:</b>
+                <ul>
+                    {''.join(f'<li>Segment {k}: {v:.2f}</li>' for k, v in probabilities.items())}
+                </ul>
+            </p>
+            <p>
+                <b>Included Charts:</b>
+                <ul>
+                    <li>Probability Pie Chart</li>
+                    <li>Scatter Plot</li>
+                </ul>
+            </p>
     '''
     if pie_chart_img:
-        html += f'<h3>Probability Pie Chart</h3><img src="data:image/png;base64,{pie_chart_img}" width="400"/>'
+        html += f'<h3>Probability Pie Chart</h3><img src="data:image/png;base64,{pie_chart_img}" width="400"/></br></br></br></br>'
     if scatter_img:
         html += f'<h3>Scatter Plot (Income vs. Spending Score)</h3><img src="data:image/png;base64,{scatter_img}" width="400"/>'
     html += '</body></html>'
+
     # Generate PDF to a temporary file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as tmpfile:
         config = pdfkit.configuration(wkhtmltopdf=r'C:\\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe')
