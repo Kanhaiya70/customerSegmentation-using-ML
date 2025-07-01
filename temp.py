@@ -3,7 +3,7 @@ import numpy as np
 
 # Set seed for reproducibility
 np.random.seed(42)
-n = 50  # Number of rows
+n = 10  # Number of rows
 
 # Generate synthetic data
 ages = np.random.randint(18, 70, size=n)

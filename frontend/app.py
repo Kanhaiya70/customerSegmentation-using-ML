@@ -75,6 +75,7 @@ st.markdown('''
 
 BACKEND_URL = os.getenv("URL_PREDICT")
 REPORT_URL = os.getenv("URL_REPORT")
+RETRAIN_URL = os.getenv("URL_RETRAIN")
 
 SEGMENT_DESCRIPTIONS = {
     0: [
@@ -141,7 +142,7 @@ if page == 'Prediction & Insights':
             with st.spinner("Retraining model..."):
                 files = {"file": uploaded_file.getvalue()}
                 try:
-                    response = requests.post("http://localhost:5000/retrain", files= {"file": uploaded_file})
+                    response = requests.post(RETRAIN_URL, files= {"file": uploaded_file})
                     if response.status_code == 200:
                         st.success("✅ Model retrained and data updated successfully!")
                         load_sample_data.clear()
