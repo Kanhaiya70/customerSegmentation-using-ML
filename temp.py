@@ -1,24 +1,38 @@
 import pandas as pd
+import numpy as np
 
-df = pd.read_csv('data/customers.csv')
+# Set seed for reproducibility
+np.random.seed(42)
+n = 50  # Number of rows
 
-def assign_segment(row):
-    age, income, score = row['age'], row['income'], row['score']
+# Generate synthetic data
+ages = np.random.randint(18, 70, size=n)
+incomes = np.random.randint(15, 150, size=n)  # in k$
+scores = np.random.randint(1, 101, size=n)
 
-    if income < 40 and score < 40:
-        return 0  # Budget-Conscious
-    elif age <= 30 and 40 <= score <= 70:
-        return 1  # Young Explorers
-    elif income >= 90 and score >= 70:
-        return 2  # High Income, High Spend
-    elif 40 <= income <= 80 and 40 <= score <= 70:
-        return 3  # Moderate Spenders
-    elif (income < 40 and score >= 70) or (score > 90):
-        return 4  # Occasional Shoppers
+# Define numeric segment logic similar to clustering labels
+def assign_segment(age, income, score):
+    if income > 100 and score > 70:
+        return 4  # High-Value
+    elif income < 50 and score < 40:
+        return 0  # Low-Value
+    elif age < 30 and score > 75:
+        return 1  # Young-Spender
+    elif age > 55 and income > 80:
+        return 2  # Senior-Affluent
     else:
-        return 3  # Default to moderate
+        return 3  # Mid-Tier
 
-df['new_segment'] = df.apply(assign_segment, axis=1)
+# Apply segment assignment
+segments = [assign_segment(age, income, score) for age, income, score in zip(ages, incomes, scores)]
 
-# Save the enhanced version
-df.to_csv('data/enhanced_customers.csv', index=False)
+# Create DataFrame
+df = pd.DataFrame({
+    "age": ages,
+    "income": incomes,
+    "score": scores,
+    "segment": segments
+})
+
+# Save to CSV
+df.to_csv("customer_segments_500.csv", index=False)

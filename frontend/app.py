@@ -121,7 +121,7 @@ if 'scatter_img' not in st.session_state:
     st.session_state['scatter_img'] = None
 
 # Load sample data for scatter plot
-@st.cache_data
+@st.cache_data(ttl=60)      # reload every 60 sec automatically
 def load_sample_data():
     df = pd.read_csv('data/enhanced_customers.csv')
     return df
@@ -132,6 +132,25 @@ if page == 'Prediction & Insights':
     st.markdown("""
     <div style='margin-bottom:1em;'><h2>🧾 Customer Input</h2></div>
     """, unsafe_allow_html=True)
+
+    st.markdown("<h4 style= 'color: #4F8BF9;'>📂 Upload Your Dataset</h4>", unsafe_allow_html= True)
+    uploaded_file = st.file_uploader("Upload a customer CSV file to retrain the model", type=["csv"])
+
+    if uploaded_file:
+        if st.button("⚙️ Retrain Model on Uploaded Data"):
+            with st.spinner("Retraining model..."):
+                files = {"file": uploaded_file.getvalue()}
+                try:
+                    response = requests.post("http://localhost:5000/retrain", files= {"file": uploaded_file})
+                    if response.status_code == 200:
+                        st.success("✅ Model retrained and data updated successfully!")
+                        load_sample_data.clear()
+                    else:
+                        st.error("❌ Retraining failed.")
+                except Exception as e:
+                    st.error(f"Error: {e}")
+
+
     with st.form('input_form'):
         name = st.text_input('Name', placeholder= "Enter your name")        # Trial version
         age = st.number_input('Age', min_value=10, max_value=100, value=25)
